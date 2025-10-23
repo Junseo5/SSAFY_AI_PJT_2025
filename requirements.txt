@@ -1,0 +1,74 @@
+# ===================================================================
+# Kaggle VQA Challenge - Requirements (T4 GPU Compatible)
+# ===================================================================
+# CRITICAL FIXES:
+# - BFloat16 NOT supported on T4 → Using Float16
+# - FlashAttention 2 NOT supported on T4 → Removed
+# - Transformers requires Git install for Qwen2.5-VL support
+# ===================================================================
+
+# PyTorch (CUDA 11.8 compatible)
+torch==2.3.0
+torchvision==0.18.0
+torchaudio==2.3.0
+
+# Transformers (Git install for latest Qwen2.5-VL support)
+# Install with: pip install git+https://github.com/huggingface/transformers.git
+# transformers>=4.49.0  # PyPI alternative (may not have latest Qwen2.5-VL)
+
+# Qwen Vision-Language Utils (REQUIRED for Qwen2.5-VL)
+qwen-vl-utils[decord]==0.0.8
+
+# Model Training & PEFT
+peft==0.12.0
+bitsandbytes==0.43.3
+accelerate==0.33.0
+
+# Data Processing
+datasets==2.20.0
+pillow==10.4.0
+opencv-python==4.10.0
+scikit-learn==1.5.1
+pandas==2.2.2
+numpy==1.26.4
+tqdm==4.66.4
+
+# Experiment Tracking & Optimization
+wandb==0.17.5
+optuna==3.6.1
+
+# Configuration & Utils
+pyyaml==6.0.1
+python-dotenv==1.0.1
+
+# Jupyter (for notebooks)
+jupyter==1.0.0
+ipywidgets==8.1.3
+
+# Visualization
+matplotlib==3.9.1
+seaborn==0.13.2
+
+# ===================================================================
+# REMOVED (T4 GPU Incompatible):
+# ===================================================================
+# flash-attn==2.6.3  # T4 does not support FlashAttention 2
+# ===================================================================
+
+# ===================================================================
+# Installation Notes:
+# ===================================================================
+# 1. Install PyTorch first:
+#    pip install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0
+#
+# 2. Install Transformers from Git (REQUIRED for Qwen2.5-VL):
+#    pip install git+https://github.com/huggingface/transformers.git
+#
+# 3. Install qwen-vl-utils (REQUIRED):
+#    pip install qwen-vl-utils[decord]==0.0.8
+#
+# 4. Install remaining packages:
+#    pip install -r requirements.txt
+#
+# Or use the provided install.sh script
+# ===================================================================
