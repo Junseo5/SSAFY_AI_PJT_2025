@@ -252,7 +252,13 @@ class ForcedChoicePredictor:
         print(f"{'─'*60}\n")
 
         for idx, row in tqdm(test_df.iterrows(), total=len(test_df), desc="Predicting"):
-            image_path = os.path.join(image_dir, row['image'])
+            # 이미지 경로 (path 또는 image 컬럼 지원)
+            if 'path' in row:
+                image_path = os.path.join(image_dir, row['path'])
+            elif 'image' in row:
+                image_path = os.path.join(image_dir, row['image'])
+            else:
+                raise ValueError("No 'path' or 'image' column found")
 
             # 이미지 존재 확인
             if not os.path.exists(image_path):

@@ -9,6 +9,20 @@ Visual Question Answering (VQA) 챌린지를 위한 완전한 구현 프로젝�
 - **환경**: T4 GPU × 2 (30GB VRAM)
 - **기간**: 5일 해커톤
 
+### 🎯 Two Workflows Available
+
+- **🔵 Baseline Workflow**: 간단하고 빠른 프로토타이핑 (baseline_train.py, baseline_infer.py)
+- **🟢 Advanced Workflow**: 최적화된 경쟁용 파이프라인 (train_lora.py, infer_forced_choice.py + ensemble)
+
+### 💡 Data Structure Compatibility
+
+모든 스크립트는 두 가지 데이터 형식을 자동으로 지원합니다:
+
+- **Option 1**: `path` column (baseline style) - `train/train_0001.jpg`
+- **Option 2**: `image` column (alternative) - `images/train_0001.jpg`
+
+스크립트가 자동으로 감지하고 처리하므로 데이터 형식을 변경할 필요가 없습니다.
+
 ## ✅ 완료된 주요 작업
 
 ### 1. 프로젝트 구조 설정
@@ -143,6 +157,36 @@ Visual Question Answering (VQA) 챌린지를 위한 완전한 구현 프로젝�
 
 ## 🚀 실행 방법
 
+### 🎯 Two Workflows Available
+
+This project now supports two workflows:
+
+#### 🔵 **Baseline Workflow** (간단/빠름)
+Based on the competition's baseline notebook. Perfect for quick testing.
+
+```bash
+# 1. 학습
+python scripts/baseline_train.py \
+  --model_id Qwen/Qwen2.5-VL-3B-Instruct \
+  --train_csv data/train.csv \
+  --data_dir data \
+  --output_dir checkpoints/baseline \
+  --epochs 1
+
+# 2. 추론
+python scripts/baseline_infer.py \
+  --model_path checkpoints/baseline \
+  --test_csv data/test.csv \
+  --data_dir data \
+  --output_csv outputs/submission_baseline.csv
+
+# 3. 검증
+python scripts/validate_submission.py --file outputs/submission_baseline.csv
+```
+
+#### 🟢 **Advanced Workflow** (최적화/고성능)
+Full-featured with all optimizations for maximum competition performance.
+
 ### 1. 설치
 ```bash
 bash install.sh
@@ -212,8 +256,10 @@ SSAFY_AI_PJT_2025/
 │   ├── prompt_manager.py        # 프롬프트 관리
 │   ├── error_handler.py         # 에러 처리
 │   ├── memory_optimizer.py      # GPU 메모리 관리
-│   ├── train_lora.py            # ⭐ 학습 (라벨 정렬 교정)
-│   ├── infer_forced_choice.py   # 추론
+│   ├── baseline_train.py        # 🔵 Baseline 학습 (간단/빠름)
+│   ├── baseline_infer.py        # 🔵 Baseline 추론
+│   ├── train_lora.py            # 🟢 ⭐ Advanced 학습 (라벨 정렬 교정)
+│   ├── infer_forced_choice.py   # 🟢 Advanced 추론
 │   ├── ensemble.py              # 앙상블 (확률 평균)
 │   └── validate_submission.py   # 제출 파일 검증
 ├── notebooks/
