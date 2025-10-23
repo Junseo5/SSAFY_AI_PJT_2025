@@ -1,3 +1,4 @@
+Experiments folder for model checkpoints and logs
 # Experiments Index
 
 This directory tracks notebook-based experiments with their scores and change logs.
