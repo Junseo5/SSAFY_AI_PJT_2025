@@ -1,0 +1,143 @@
+# ===================================================================
+# Kaggle VQA Challenge - Prompt Templates
+# ===================================================================
+# Question type-specific prompts optimized for Qwen2.5-VL
+# ===================================================================
+
+prompt_templates:
+  # Counting questions
+  counting:
+    system: "You are a visual counting expert. Analyze the image carefully and count objects precisely."
+    user: |
+      Question: {question}
+
+      Choices:
+      a) {choice_a}
+      b) {choice_b}
+      c) {choice_c}
+      d) {choice_d}
+
+      Instructions:
+      1. Locate all relevant objects in the image
+      2. Count each object carefully
+      3. Match your count with the closest choice
+      4. Answer ONLY with a single lowercase letter: a, b, c, or d
+
+  # Color recognition questions
+  color:
+    system: "You are a color recognition expert. Identify colors accurately considering lighting and context."
+    user: |
+      Question: {question}
+
+      Choices:
+      a) {choice_a}
+      b) {choice_b}
+      c) {choice_c}
+      d) {choice_d}
+
+      Instructions:
+      1. Identify the primary color of the specified object
+      2. Consider lighting conditions that may affect color appearance
+      3. Select the most accurate color description from the choices
+      4. Answer ONLY with a single lowercase letter: a, b, c, or d
+
+  # OCR (Optical Character Recognition) questions
+  ocr:
+    system: "You are an OCR specialist. Extract text accurately from images, supporting Korean, English, and numbers."
+    user: |
+      Question: {question}
+
+      Choices:
+      a) {choice_a}
+      b) {choice_b}
+      c) {choice_c}
+      d) {choice_d}
+
+      Instructions:
+      1. Locate and read text in the image carefully
+      2. Text may be in Korean (한글), English, or numbers
+      3. Pay attention to similar-looking characters
+      4. Match exactly with the provided choices
+      5. Answer ONLY with a single lowercase letter: a, b, c, or d
+
+  # Yes/No questions
+  yesno:
+    system: "You are a visual reasoning expert. Determine if statements are true or false based on the image."
+    user: |
+      Question: {question}
+
+      Choices:
+      a) {choice_a}
+      b) {choice_b}
+      c) {choice_c}
+      d) {choice_d}
+
+      Instructions:
+      1. Carefully verify the statement against the image content
+      2. Answer with the appropriate yes/no/correct/incorrect option
+      3. Be certain before answering
+      4. Answer ONLY with a single lowercase letter: a, b, c, or d
+
+  # Location questions
+  location:
+    system: "You are a spatial reasoning expert. Identify locations and positions in images accurately."
+    user: |
+      Question: {question}
+
+      Choices:
+      a) {choice_a}
+      b) {choice_b}
+      c) {choice_c}
+      d) {choice_d}
+
+      Instructions:
+      1. Identify the location or position being asked about
+      2. Consider spatial relationships (left, right, top, bottom, center)
+      3. Select the most accurate description from the choices
+      4. Answer ONLY with a single lowercase letter: a, b, c, or d
+
+  # Attribute questions
+  attribute:
+    system: "You are a visual attribute recognition expert. Identify object attributes and characteristics accurately."
+    user: |
+      Question: {question}
+
+      Choices:
+      a) {choice_a}
+      b) {choice_b}
+      c) {choice_c}
+      d) {choice_d}
+
+      Instructions:
+      1. Identify the attribute being asked about (shape, size, material, etc.)
+      2. Carefully examine the relevant object or scene
+      3. Select the most accurate description from the choices
+      4. Answer ONLY with a single lowercase letter: a, b, c, or d
+
+  # General VQA questions
+  general:
+    system: "You are a visual question answering expert. Analyze images and answer questions accurately."
+    user: |
+      Question: {question}
+
+      Choices:
+      a) {choice_a}
+      b) {choice_b}
+      c) {choice_c}
+      d) {choice_d}
+
+      Instructions:
+      1. Carefully analyze the image
+      2. Understand the question thoroughly
+      3. Consider all provided choices
+      4. Select the most accurate answer based on what you see
+      5. Answer ONLY with a single lowercase letter: a, b, c, or d
+
+# ===================================================================
+# Usage Notes:
+# ===================================================================
+# 1. Use PromptManager class to format prompts
+# 2. Question type is automatically detected in EDA/CV scripts
+# 3. Prompts are compatible with Qwen2.5-VL apply_chat_template
+# 4. Always use lowercase letters for answers (a, b, c, d)
+# ===================================================================
