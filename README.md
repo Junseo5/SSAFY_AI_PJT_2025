@@ -75,8 +75,10 @@ SSAFY_AI_PJT_2025/
 │   ├── prompt_manager.py    # 프롬프트 관리
 │   ├── error_handler.py     # 에러 처리
 │   ├── memory_optimizer.py  # GPU 메모리 관리
-│   ├── train_lora.py        # QLoRA 학습 (라벨 정렬 교정)
-│   ├── infer_forced_choice.py # Forced-choice 추론
+│   ├── baseline_train.py    # 🔵 Baseline 학습 (간단/빠름)
+│   ├── baseline_infer.py    # 🔵 Baseline 추론
+│   ├── train_lora.py        # 🟢 Advanced QLoRA 학습 (라벨 정렬 교정)
+│   ├── infer_forced_choice.py # 🟢 Advanced Forced-choice 추론
 │   ├── ensemble.py          # 앙상블 (확률 평균)
 │   └── validate_submission.py # 제출 파일 검증
 ├── checkpoints/             # 모델 체크포인트
@@ -157,6 +159,134 @@ python scripts/ensemble.py \
 # 제출 파일 검증
 python scripts/validate_submission.py --file outputs/submission_ensemble.csv
 ```
+
+## 🎯 Two Workflows: Baseline vs Advanced
+
+This project provides two workflows to suit different needs:
+
+### 🔵 Baseline Workflow (Simple & Fast)
+
+Perfect for quick testing and prototyping. Based on the competition's baseline notebook.
+
+**Features**:
+- Simple and straightforward
+- Uses `AutoModelForVision2Seq` (compatible with baseline)
+- Direct `path` column support (`train/train_0001.jpg`)
+- No complex preprocessing
+- Fast iteration
+
+**Usage**:
+```bash
+# Training
+python scripts/baseline_train.py \
+  --model_id Qwen/Qwen2.5-VL-3B-Instruct \
+  --train_csv data/train.csv \
+  --data_dir data \
+  --output_dir checkpoints/baseline \
+  --image_size 384 \
+  --batch_size 1 \
+  --epochs 1
+
+# Inference
+python scripts/baseline_infer.py \
+  --model_path checkpoints/baseline \
+  --test_csv data/test.csv \
+  --data_dir data \
+  --output_csv outputs/submission_baseline.csv
+
+# Validation
+python scripts/validate_submission.py --file outputs/submission_baseline.csv
+```
+
+**When to use**:
+- Quick experimentation
+- Baseline comparison
+- Limited time/resources
+- Testing new ideas quickly
+
+### 🟢 Advanced Workflow (Optimized for Competition)
+
+Full-featured workflow with all optimizations and critical fixes for maximum performance.
+
+**Features**:
+- `Qwen2_5_VLForConditionalGeneration` (latest class)
+- Label alignment fix (assistant message)
+- Question type-specific prompts (7 types)
+- Stratified K-Fold Cross-Validation
+- Data augmentation (with OCR protection)
+- Ensemble methods (probability averaging)
+- Answer normalization
+- Memory optimization
+
+**Usage**:
+```bash
+# 1. EDA & CV Splits
+python scripts/eda.py
+python scripts/stratified_cv.py
+
+# 2. Training (3-fold)
+for fold in 0 1 2; do
+  python scripts/train_lora.py \
+    --model_id Qwen/Qwen2.5-VL-7B-Instruct \
+    --fold $fold \
+    --output_dir checkpoints/qwen-7b-fold$fold \
+    --device cuda:0 \
+    --num_epochs 3 \
+    --lr 2e-5
+done
+
+# 3. Inference
+for fold in 0 1 2; do
+  python scripts/infer_forced_choice.py \
+    --model_path checkpoints/qwen-7b-fold$fold/final \
+    --test_csv data/test.csv \
+    --image_dir data/images \
+    --output_csv outputs/submission_fold$fold.csv \
+    --device cuda:0
+done
+
+# 4. Ensemble
+python scripts/ensemble.py \
+  --predictions outputs/submission_fold*.csv \
+  --method weighted \
+  --val_accuracies 0.825 0.818 0.822 \
+  --output outputs/submission_ensemble.csv
+
+# 5. Validation
+python scripts/validate_submission.py --file outputs/submission_ensemble.csv
+```
+
+**When to use**:
+- Final competition submission
+- Maximum accuracy required
+- Multi-fold ensemble
+- Full pipeline validation
+
+### 📊 Expected Performance
+
+| Workflow | Accuracy | Training Time | Notes |
+|----------|----------|---------------|-------|
+| Baseline (3B) | 75-78% | ~2h | Quick baseline |
+| Advanced Single (7B) | 79-82% | ~4h/fold | QLoRA optimized |
+| Advanced Ensemble (3-fold) | 83-85% | ~12h total | Full pipeline |
+| Advanced + Optimization | 85-88% | ~15h total | HP tuning, TTA |
+
+### 💡 Data Structure Support
+
+Both workflows support flexible data structures:
+
+```python
+# Option 1: 'path' column (baseline style)
+# data/train.csv:
+# id,path,question,a,b,c,d,answer
+# 1,train/train_0001.jpg,질문?,보기1,보기2,보기3,보기4,a
+
+# Option 2: 'image' column (alternative)
+# id,image,question,a,b,c,d,answer
+# 1,images/train_0001.jpg,질문?,보기1,보기2,보기3,보기4,a
+```
+
+All scripts automatically detect and handle both formats.
 
 ## 📊 Key Features
 

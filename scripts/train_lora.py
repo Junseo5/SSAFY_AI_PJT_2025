@@ -82,11 +82,13 @@ class VQADataset(torch.utils.data.Dataset):
         """
         row = self.df.iloc[idx]
 
-        # 이미지 경로
-        if 'image' in row:
+        # 이미지 경로 (path 또는 image 컬럼 지원)
+        if 'path' in row:
+            image_path = os.path.join(self.image_dir, row['path'])
+        elif 'image' in row:
             image_path = os.path.join(self.image_dir, row['image'])
         else:
-            raise ValueError(f"No 'image' column in row {idx}")
+            raise ValueError(f"No 'path' or 'image' column in row {idx}")
 
         # 이미지 존재 확인
         if not os.path.exists(image_path):
